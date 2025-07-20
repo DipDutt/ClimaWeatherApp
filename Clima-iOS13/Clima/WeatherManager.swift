@@ -47,7 +47,10 @@ struct WeatherManager  {
                         guard let weather = self.parsejOSON(data: data) else {
                             return
                         }
-                        delegate?.didFectchWeather(weather)
+                        DispatchQueue.main.async {
+                            delegate?.didFectchWeather(weather)
+                        }
+                        
                     }
                 }
                 
@@ -60,13 +63,14 @@ struct WeatherManager  {
     // MARK: Create parsejOSON method for json decoding.
     func parsejOSON(data:Data)-> WeatherDescription? {
         do {
-            
-            let decode = try JSONDecoder().decode(WeatherModel.self, from: data)
-            let cityName = decode.name
-            let temparature = decode.main.temp
-            let conditionId = decode.weather[0].id
-            let weatherDescription = WeatherDescription(cityName: cityName, temperature: temparature, conditionId: conditionId)
-            return weatherDescription
+           
+                let decode = try JSONDecoder().decode(WeatherModel.self, from: data)
+                let cityName = decode.name
+                let temparature = decode.main.temp
+                let conditionId = decode.weather[0].id
+                let weatherDescription = WeatherDescription(cityName: cityName, temperature: temparature, conditionId: conditionId)
+                return weatherDescription
+                
             
         }
         
