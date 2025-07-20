@@ -36,21 +36,23 @@ struct WeatherManager  {
     func performNetworking(with urlString: String) {
         
         if let url = URL(string: urlString) {
-            let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                if  error != nil {
-                    print("Error: \(error?.localizedDescription ?? "")")
-                    return
-                }
-                
-                if let data = data {
-                   guard let weather = self.parsejOSON(data: data) else {
+            DispatchQueue.global(qos: .userInteractive).async {
+                let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                    if  error != nil {
+                        print("Error: \(error?.localizedDescription ?? "")")
                         return
                     }
-                    delegate?.didFectchWeather(weather)
+                    
+                    if let data = data {
+                        guard let weather = self.parsejOSON(data: data) else {
+                            return
+                        }
+                        delegate?.didFectchWeather(weather)
+                    }
                 }
+                
+                task.resume()
             }
-            
-            task.resume()
         }
         
     }
